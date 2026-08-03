@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Zhuoming 的个人入口与 Loresis 使用手册。" />
+    <meta name="theme-color" content="#f3f1ed" />
+    <title>Zhuoming · Loresis</title>
+    <style>
+      :root {
+        --paper: #f3f1ed;
+        --paper-deep: #e9e5de;
+        --ink: #1f211e;
+        --muted: #74756f;
+        --line: rgba(31, 33, 30, 0.15);
+        --accent: #b76d45;
+        --accent-deep: #8c4e31;
+        --accent-soft: rgba(183, 109, 69, 0.12);
+        --shadow: 0 22px 60px rgba(67, 55, 42, 0.11);
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; background: var(--paper); }
+      body {
+        min-width: 320px;
+        margin: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 82% 8%, rgba(183, 109, 69, 0.13), transparent 25rem),
+          var(--paper);
+        font-family: "Avenir Next", "SF Pro Display", "Segoe UI", sans-serif;
+        line-height: 1.6;
+        text-rendering: optimizeLegibility;
+      }
+
+      a { color: inherit; }
+      .page-shell { max-width: 1240px; min-height: 100dvh; margin: 0 auto; padding: 0 clamp(18px, 4vw, 58px); }
+      .topbar { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 25px 0; border-bottom: 1px solid var(--line); }
+      .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); font-size: 11px; font-weight: 800; letter-spacing: 0.16em; text-decoration: none; }
+      .brand-mark { display: grid; place-items: center; width: 25px; height: 25px; border: 1px solid var(--accent); border-radius: 50%; color: var(--accent-deep); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 9px; letter-spacing: 0; }
+      .topbar-note { color: var(--muted); font-size: 11px; letter-spacing: 0.04em; }
+
+      .hero { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(310px, 0.88fr); gap: clamp(40px, 8vw, 120px); align-items: center; min-height: min(720px, calc(100dvh - 76px)); padding: clamp(58px, 10vw, 130px) 0 clamp(70px, 10vw, 130px); }
+      .hero-copy { max-width: 620px; }
+      .eyebrow { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 22px; color: var(--accent-deep); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+      .eyebrow::before { width: 8px; height: 8px; border: 1px solid currentColor; border-radius: 50%; content: ""; }
+      h1 { max-width: 9ch; margin: 0; font-size: clamp(44px, 7vw, 88px); font-weight: 700; letter-spacing: -0.07em; line-height: 0.98; }
+      .hero-lead { max-width: 50ch; margin: 28px 0 0; color: var(--muted); font-size: clamp(15px, 1.7vw, 18px); line-height: 1.8; }
+      .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px; }
+      .button { display: inline-flex; align-items: center; gap: 10px; min-height: 42px; padding: 10px 15px; border: 1px solid var(--line); border-radius: 10px; color: var(--muted); background: rgba(255, 255, 255, 0.42); font-size: 12px; font-weight: 700; text-decoration: none; transition: transform 180ms ease, border-color 180ms ease, color 180ms ease, background 180ms ease; }
+      .button.primary { border-color: var(--accent); color: #fff; background: var(--accent); box-shadow: 0 10px 22px rgba(183, 109, 69, 0.18); }
+      .button:hover { transform: translateY(-2px); border-color: var(--accent); color: var(--ink); }
+      .button.primary:hover { color: #fff; background: var(--accent-deep); }
+      .button:active { transform: translateY(0) scale(0.98); }
+
+      .flow-panel { position: relative; padding: 28px; border: 1px solid rgba(183, 109, 69, 0.34); border-radius: 22px; background: linear-gradient(145deg, rgba(255, 255, 255, 0.7), rgba(233, 229, 222, 0.62)); box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.72); overflow: hidden; }
+      .flow-panel::after { position: absolute; inset: 0; pointer-events: none; content: ""; opacity: 0.35; background-image: linear-gradient(rgba(183, 109, 69, 0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(183, 109, 69, 0.08) 1px, transparent 1px); background-size: 28px 28px; mask-image: linear-gradient(135deg, #000, transparent 75%); }
+      .flow-kicker { position: relative; z-index: 1; margin: 0 0 25px; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; }
+      .flow-list { position: relative; z-index: 1; display: grid; gap: 0; }
+      .flow-item { position: relative; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 13px; padding: 0 0 22px; }
+      .flow-item:last-child { padding-bottom: 0; }
+      .flow-item:not(:last-child)::after { position: absolute; top: 30px; bottom: 0; left: 16px; width: 1px; background: rgba(183, 109, 69, 0.28); content: ""; }
+      .flow-number { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid rgba(183, 109, 69, 0.42); border-radius: 50%; color: var(--accent-deep); background: rgba(255, 255, 255, 0.62); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; }
+      .flow-item strong, .flow-item span { display: block; }
+      .flow-item strong { margin-top: 1px; font-size: 14px; }
+      .flow-item span { margin-top: 3px; color: var(--muted); font-size: 12px; line-height: 1.55; }
+      .flow-path { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 8px; margin-top: 28px; padding: 8px 10px; border: 1px solid rgba(183, 109, 69, 0.28); border-radius: 999px; color: var(--accent-deep); background: var(--accent-soft); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; }
+
+      .footer { display: flex; justify-content: space-between; gap: 24px; padding: 18px 0 28px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; }
+      .footer a { color: var(--accent-deep); font-weight: 700; text-decoration: none; }
+      .footer a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+      @media (max-width: 820px) {
+        .hero { grid-template-columns: 1fr; min-height: auto; gap: 46px; padding-top: 70px; }
+        h1 { max-width: 11ch; }
+        .flow-panel { max-width: 620px; }
+      }
+
+      @media (max-width: 560px) {
+        .page-shell { padding: 0 16px; }
+        .topbar { align-items: flex-start; flex-direction: column; gap: 10px; padding: 18px 0; }
+        .hero { padding: 55px 0 70px; }
+        h1 { font-size: 48px; }
+        .hero-lead { font-size: 15px; }
+        .flow-panel { padding: 22px; border-radius: 17px; }
+        .footer { align-items: flex-start; flex-direction: column; gap: 7px; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        .button { transition: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="返回首页"><span class="brand-mark">Z</span>ZHUOMING 2026</a>
+        <span class="topbar-note">个人入口 · Loresis field guide</span>
+      </header>
+
+      <main class="hero">
+        <section class="hero-copy" aria-labelledby="page-title">
+          <p class="eyebrow">一个安静的入口</p>
+          <h1 id="page-title">把灵感，留在可以继续的地方。</h1>
+          <p class="hero-lead">这里先放一份 Loresis 本地 RP 与故事写作工作台手册。页面保持轻量，入口保持稳定；以后首页可以继续装修，教程地址不会改变。</p>
+          <div class="hero-actions">
+            <a class="button primary" href="/Loresis/">打开 Loresis 教程 <span aria-hidden="true">→</span></a>
+            <a class="button" href="#about">查看页面说明 <span aria-hidden="true">↓</span></a>
+          </div>
+        </section>
+
+        <aside class="flow-panel" id="about" aria-label="Loresis 教程路径">
+          <p class="flow-kicker">Loresis / field guide</p>
+          <div class="flow-list">
+            <div class="flow-item"><span class="flow-number">01</span><div><strong>准备入口</strong><span>从角色卡或创世构建开始。</span></div></div>
+            <div class="flow-item"><span class="flow-number">02</span><div><strong>整理设定</strong><span>让故事解析和开场选择落地。</span></div></div>
+            <div class="flow-item"><span class="flow-number">03</span><div><strong>推进章节</strong><span>在故事区写下每一回合。</span></div></div>
+            <div class="flow-item"><span class="flow-number">04</span><div><strong>回看真值</strong><span>检查状态、记忆与运行记录。</span></div></div>
+          </div>
+          <span class="flow-path">固定入口&nbsp; /Loresis/</span>
+        </aside>
+      </main>
+
+      <footer class="footer">
+        <span>静态页面 · 无需额外依赖</span>
+        <a href="/Loresis/">进入 Loresis 使用手册 →</a>
+      </footer>
+    </div>
+  </body>
+</html>

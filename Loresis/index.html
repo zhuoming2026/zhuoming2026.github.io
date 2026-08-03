@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Loresis 本地 RP 与故事写作工作台使用手册" />
+    <title>Loresis · 本地使用手册</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --ink: #202126;
+        --muted: #6e717b;
+        --line: rgba(32, 33, 38, 0.14);
+        --surface: #f9f9fb;
+        --surface-low: #f1f1f5;
+        --surface-pane: rgba(255, 255, 255, 0.76);
+        --accent: #b26b35;
+        --accent-soft: rgba(178, 107, 53, 0.1);
+        --accent-strong: #8f4d22;
+        --shadow: 0 18px 48px rgba(32, 33, 38, 0.08);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --ink: #eeeef2;
+          --muted: #a3a5af;
+          --line: rgba(238, 238, 242, 0.15);
+          --surface: #17181c;
+          --surface-low: #222329;
+          --surface-pane: rgba(34, 35, 41, 0.82);
+          --accent: #d8925d;
+          --accent-soft: rgba(216, 146, 93, 0.13);
+          --accent-strong: #efb27e;
+          --shadow: 0 18px 48px rgba(0, 0, 0, 0.24);
+        }
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; background: var(--surface); }
+      body {
+        min-width: 320px;
+        margin: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 88% 4%, var(--accent-soft), transparent 26rem),
+          var(--surface);
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+        font-size: 14px;
+        line-height: 1.7;
+        text-rendering: optimizeLegibility;
+      }
+
+      .site-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 18px clamp(16px, 3vw, 52px) 0;
+      }
+      .site-brand,
+      .site-home {
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+      .site-brand { color: var(--accent-strong); }
+      .site-home { padding: 6px 9px; border: 1px solid var(--line); border-radius: 8px; letter-spacing: 0.04em; text-transform: none; transition: color 180ms ease, border-color 180ms ease, transform 180ms ease; }
+      .site-home:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--accent) 42%, var(--line)); color: var(--ink); }
+
+      button, a { font: inherit; }
+      button { cursor: pointer; }
+      a { color: inherit; }
+
+      .manual {
+        position: relative;
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 22px clamp(16px, 3vw, 52px) 52px;
+        overflow: clip;
+      }
+
+      .ambient {
+        position: absolute;
+        z-index: -1;
+        width: 360px;
+        height: 360px;
+        border-radius: 50%;
+        filter: blur(58px);
+        pointer-events: none;
+        opacity: 0.18;
+      }
+
+      .ambient.one { top: 16px; right: -156px; background: var(--accent); }
+      .ambient.two { top: 860px; left: -220px; background: var(--accent-strong); opacity: 0.08; }
+
+      .hero {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid color-mix(in srgb, var(--accent) 26%, var(--line));
+        border-radius: 22px;
+        background:
+          radial-gradient(circle at 84% 12%, var(--accent-soft), transparent 34%),
+          linear-gradient(135deg, color-mix(in srgb, var(--surface-low) 90%, transparent), color-mix(in srgb, var(--surface-pane) 96%, transparent));
+        box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.32);
+      }
+
+      .hero::after {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        content: "";
+        opacity: 0.34;
+        background-image: linear-gradient(color-mix(in srgb, var(--accent) 7%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--accent) 7%, transparent) 1px, transparent 1px);
+        background-size: 32px 32px;
+        mask-image: linear-gradient(120deg, #000, transparent 78%);
+      }
+
+      .hero-topline,
+      .hero-grid,
+      .chapter-rail,
+      .intro,
+      .section,
+      .footer { position: relative; z-index: 1; }
+
+      .hero-topline {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 16px 22px 0;
+        color: var(--muted);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow, .status, .shot-topline span:first-child { display: inline-flex; align-items: center; gap: 7px; }
+      .eyebrow::before { width: 9px; height: 9px; border: 1px solid var(--accent); border-radius: 50%; content: ""; }
+      .status {
+        gap: 8px;
+        padding: 5px 9px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface-pane);
+        letter-spacing: 0.04em;
+        text-transform: none;
+      }
+      .status::before { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); content: ""; }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(250px, 0.85fr);
+        gap: clamp(26px, 5vw, 76px);
+        align-items: stretch;
+        padding: 40px clamp(22px, 4vw, 52px) 46px;
+      }
+
+      .hero-copy { max-width: 680px; }
+      .kicker {
+        margin: 0;
+        color: var(--accent-strong);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        line-height: 1.4;
+        text-transform: uppercase;
+      }
+      h1, h2, h3, p { margin-top: 0; }
+      h1 {
+        max-width: 12ch;
+        margin-bottom: 16px;
+        font-size: clamp(32px, 4.5vw, 58px);
+        font-weight: 700;
+        letter-spacing: -0.055em;
+        line-height: 0.98;
+      }
+      .hero-lead { max-width: 58ch; margin-bottom: 0; color: var(--muted); font-size: 14px; line-height: 1.85; }
+
+      .hero-actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 24px; }
+      .button {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        min-height: 34px;
+        padding: 7px 11px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        color: var(--muted);
+        background: color-mix(in srgb, var(--surface-pane) 72%, transparent);
+        font-size: 12px;
+        font-weight: 650;
+        text-decoration: none;
+        transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1), border-color 180ms ease, color 180ms ease, background 180ms ease;
+      }
+      .button.primary { border-color: color-mix(in srgb, var(--accent) 42%, var(--line)); color: #fff; background: var(--accent); box-shadow: 0 8px 18px color-mix(in srgb, var(--accent) 22%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.24); }
+      .button:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--accent) 42%, var(--line)); color: var(--ink); }
+      .button.primary:hover { color: #fff; background: color-mix(in srgb, var(--accent) 88%, #000); }
+      .button:active { transform: translateY(0) scale(0.98); }
+
+      .path-map {
+        align-self: center;
+        padding: 17px 18px 17px 22px;
+        border-left: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
+      }
+      .path-label { margin-bottom: 16px; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+      .path-step { position: relative; display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 12px; align-items: start; margin-top: 13px; }
+      .path-step:first-of-type { margin-top: 0; }
+      .path-step:not(:last-child)::after { position: absolute; top: 25px; bottom: -18px; left: 11px; width: 1px; background: color-mix(in srgb, var(--line) 76%, transparent); content: ""; }
+      .path-number { position: relative; z-index: 1; display: grid; place-items: center; width: 24px; height: 24px; border: 1px solid color-mix(in srgb, var(--accent) 48%, var(--line)); border-radius: 50%; color: var(--accent-strong); background: var(--surface-pane); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 9px; }
+      .path-step strong, .path-step span { display: block; }
+      .path-step strong { font-size: 12px; font-weight: 700; }
+      .path-step span { margin-top: 2px; color: var(--muted); font-size: 11px; line-height: 1.5; }
+
+      .chapter-rail {
+        display: flex;
+        gap: 5px;
+        margin: 20px 0 26px;
+        padding: 5px;
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        background: color-mix(in srgb, var(--surface-low) 62%, transparent);
+        scrollbar-width: none;
+      }
+      .chapter-rail::-webkit-scrollbar { display: none; }
+      .rail-item {
+        display: inline-flex;
+        flex: 0 0 auto;
+        align-items: center;
+        gap: 7px;
+        min-height: 32px;
+        padding: 6px 10px;
+        border: 1px solid transparent;
+        border-radius: 9px;
+        color: var(--muted);
+        background: transparent;
+        font-size: 11px;
+        font-weight: 650;
+        transition: color 180ms ease, background 180ms ease, border-color 180ms ease;
+      }
+      .rail-item:hover { color: var(--ink); background: var(--surface-pane); }
+      .rail-item.active { border-color: color-mix(in srgb, var(--accent) 28%, var(--line)); color: var(--accent-strong); background: var(--accent-soft); }
+      .rail-number { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 9px; opacity: 0.72; }
+
+      .intro { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(280px, 0.92fr); gap: 16px; margin-bottom: 32px; }
+      .intro-note, .intro-list { border: 1px solid var(--line); border-radius: 15px; background: color-mix(in srgb, var(--surface-low) 55%, transparent); }
+      .intro-note { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 14px; padding: 19px; }
+      .intro-mark { display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--line)); border-radius: 10px; color: var(--accent-strong); background: var(--accent-soft); font-size: 16px; }
+      .intro-note h2 { margin-bottom: 8px; font-size: 18px; letter-spacing: -0.03em; line-height: 1.2; }
+      .intro-note p:last-child { margin-bottom: 0; color: var(--muted); font-size: 12px; line-height: 1.72; }
+      .intro-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 8px; }
+      .principle { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 8px; padding: 10px; border-bottom: 1px solid color-mix(in srgb, var(--line) 76%, transparent); }
+      .principle:nth-last-child(-n + 2) { border-bottom: 0; }
+      .principle-mark { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 8px; color: var(--accent-strong); background: var(--accent-soft); font-size: 11px; font-weight: 700; }
+      .principle strong, .principle span { display: block; }
+      .principle strong { font-size: 11px; font-weight: 700; }
+      .principle span { margin-top: 2px; color: var(--muted); font-size: 10px; line-height: 1.5; }
+
+      .section { scroll-margin-top: 18px; padding: 35px 0 42px; border-top: 1px solid var(--line); }
+      .section-heading { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 16px; align-items: start; }
+      .section-number { padding-top: 3px; color: var(--accent-strong); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; }
+      .section-title h2 { margin: 5px 0 7px; font-size: clamp(22px, 2.6vw, 34px); font-weight: 700; letter-spacing: -0.045em; line-height: 1.05; }
+      .section-title > p:last-child { max-width: 62ch; margin-bottom: 0; color: var(--muted); font-size: 12px; line-height: 1.65; }
+      .section-body { display: grid; grid-template-columns: minmax(0, 0.88fr) minmax(320px, 1.12fr); gap: clamp(20px, 4vw, 52px); align-items: start; margin-top: 24px; padding-left: 64px; }
+      .section-body.single { grid-template-columns: minmax(0, 1fr); }
+
+      .prose { min-width: 0; color: color-mix(in srgb, var(--ink) 88%, var(--muted)); font-size: 13px; line-height: 1.8; }
+      .prose h3 { margin: 23px 0 8px; color: var(--ink); font-size: 15px; font-weight: 700; letter-spacing: -0.02em; }
+      .prose h3:first-child { margin-top: 0; }
+      .prose p { margin: 0 0 13px; }
+      .prose ul, .prose ol { margin: 9px 0 16px; padding-left: 21px; }
+      .prose li { margin: 5px 0; padding-left: 3px; }
+      .prose li::marker { color: var(--accent); }
+      .prose strong { color: var(--ink); font-weight: 700; }
+      .prose code { padding: 2px 5px; border: 1px solid var(--line); border-radius: 5px; color: var(--accent-strong); background: var(--surface-low); font-size: 0.92em; }
+      .prose pre { margin: 13px 0 16px; padding: 12px 14px; overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; color: var(--muted); background: var(--surface-low); font-size: 11px; line-height: 1.6; }
+
+      .shot { min-width: 0; margin: 0; padding: 9px; border: 1px solid var(--line); border-radius: 15px; background: color-mix(in srgb, var(--surface-low) 54%, transparent); box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.25); }
+      .shot-topline { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 3px 5px 10px; color: var(--muted); font-size: 10px; }
+      .shot-meta { overflow: hidden; color: color-mix(in srgb, var(--muted) 76%, transparent); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; text-overflow: ellipsis; white-space: nowrap; }
+      .shot-canvas { position: relative; overflow: hidden; min-height: 150px; border: 1px solid color-mix(in srgb, var(--line) 84%, transparent); border-radius: 10px; background: var(--surface-low); }
+      .shot-canvas img { display: block; width: 100%; height: auto; min-height: 150px; object-fit: cover; }
+      .shot-marker { position: absolute; display: grid; place-items: center; width: 24px; height: 24px; transform: translate(-50%, -50%); border: 2px solid rgba(255, 255, 255, 0.82); border-radius: 50%; color: #fff; background: var(--accent); box-shadow: 0 3px 10px color-mix(in srgb, var(--accent) 38%, transparent); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; font-weight: 800; }
+      .shot-fallback { display: grid; place-items: center; min-height: 190px; color: var(--muted); font-size: 11px; text-align: center; }
+      .shot figcaption { display: grid; gap: 7px; padding: 10px 5px 1px; }
+      .shot-caption { color: var(--muted); font-size: 10.5px; line-height: 1.55; }
+      .shot-legend { display: flex; flex-wrap: wrap; gap: 6px 12px; color: var(--muted); font-size: 10px; }
+      .shot-legend span { display: inline-flex; align-items: center; gap: 5px; }
+      .shot-legend b { display: inline-grid; place-items: center; width: 16px; height: 16px; border-radius: 50%; color: #fff; background: var(--accent); font-size: 8px; }
+
+      .footer { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 13px; align-items: center; margin-top: 6px; padding: 16px; border: 1px solid color-mix(in srgb, var(--accent) 26%, var(--line)); border-radius: 15px; background: var(--accent-soft); }
+      .footer-mark { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 9px; color: var(--accent-strong); background: color-mix(in srgb, var(--accent) 14%, transparent); font-weight: 800; }
+      .footer strong { font-size: 12px; }
+      .footer p { margin: 3px 0 0; color: var(--muted); font-size: 11px; line-height: 1.55; }
+      .footer a { color: var(--accent-strong); font-size: 11px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+      .footer a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+      @media (max-width: 860px) {
+        .hero-grid, .intro { grid-template-columns: 1fr; }
+        .path-map { max-width: 520px; border-top: 1px solid color-mix(in srgb, var(--accent) 24%, var(--line)); border-left: 0; padding: 20px 0 0; }
+        .section-body { grid-template-columns: 1fr; padding-left: 0; }
+      }
+
+      @media (max-width: 560px) {
+        .manual { padding: 12px 12px 34px; }
+        .hero-topline { align-items: flex-start; flex-direction: column; padding: 14px 16px 0; }
+        .hero-grid { padding: 29px 16px 25px; }
+        h1 { max-width: 14ch; font-size: 36px; }
+        .intro-list { grid-template-columns: 1fr; }
+        .principle:nth-last-child(-n + 2) { border-bottom: 1px solid color-mix(in srgb, var(--line) 76%, transparent); }
+        .principle:last-child { border-bottom: 0; }
+        .section-heading { grid-template-columns: 36px minmax(0, 1fr); gap: 10px; }
+        .footer { grid-template-columns: 34px minmax(0, 1fr); }
+        .footer a { grid-column: 2; justify-self: start; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        .button, .rail-item { transition: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="网站导航">
+      <a class="site-brand" href="/">ZHUOMING 2026 / LORESIS</a>
+      <a class="site-home" href="/">← 返回主页</a>
+    </nav>
+    <main class="manual" data-tutorial-manual>
+      <div class="ambient one" aria-hidden="true"></div>
+      <div class="ambient two" aria-hidden="true"></div>
+
+      <header class="hero">
+        <div class="hero-topline">
+          <span class="eyebrow">LORESIS / FIELD GUIDE</span>
+          <span class="status">本地使用手册</span>
+        </div>
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="kicker">从第一张卡，到可以回看的故事</p>
+            <h1>把每一次灵感，整理成一条可继续的故事线。</h1>
+            <p class="hero-lead">这是一份围绕真实工作台界面编写的图文手册。先用角色卡或创世搭好入口，再在故事区推进章节；状态、记忆和运行记录会跟着每一回合一起保存。</p>
+            <div class="hero-actions">
+              <a class="button primary" href="#manual-basic-flow">开始阅读 <span aria-hidden="true">→</span></a>
+              <a class="button" href="#manual-story-zone">先看故事区 <span aria-hidden="true">→</span></a>
+            </div>
+          </div>
+          <div class="path-map" aria-label="完整流程">
+            <div class="path-label">一条完整路径</div>
+            <div class="path-step"><span class="path-number">01</span><div><strong>准备入口</strong><span>角色卡或创世构建</span></div></div>
+            <div class="path-step"><span class="path-number">02</span><div><strong>整理设定</strong><span>故事解析与开场选择</span></div></div>
+            <div class="path-step"><span class="path-number">03</span><div><strong>推进章节</strong><span>输入行动，保存每一回合</span></div></div>
+            <div class="path-step"><span class="path-number">04</span><div><strong>回看真值</strong><span>状态、记忆与日志</span></div></div>
+          </div>
+        </div>
+      </header>
+
+      <nav class="chapter-rail" aria-label="教程章节">
+        <a class="rail-item active" href="#manual-overview"><span class="rail-number">00</span>认识工作台</a>
+        <a class="rail-item" href="#manual-basic-flow"><span class="rail-number">01</span>基本流程</a>
+        <a class="rail-item" href="#manual-card-zone"><span class="rail-number">02</span>角色卡区</a>
+        <a class="rail-item" href="#manual-story-zone"><span class="rail-number">03</span>故事区</a>
+        <a class="rail-item" href="#manual-genesis-zone"><span class="rail-number">04</span>创世区</a>
+        <a class="rail-item" href="#manual-writer-resource"><span class="rail-number">05</span>写手与资源仓</a>
+        <a class="rail-item" href="#manual-settings"><span class="rail-number">06</span>设置与排错</a>
+      </nav>
+
+      <section class="intro" aria-label="阅读提示">
+        <div class="intro-note">
+          <div class="intro-mark" aria-hidden="true">+</div>
+          <div>
+            <p class="kicker">先看这张地图</p>
+            <h2>不要一次记住所有按钮，只要记住资料流向。</h2>
+            <p>角色卡和创世负责“从哪里开始”，故事区负责“这一回合发生什么”，右侧检查器负责“发生后留下了什么”。</p>
+          </div>
+        </div>
+        <div class="intro-list">
+          <div class="principle"><span class="principle-mark">01</span><div><strong>角色卡 / 创世</strong><span>把素材整理成可开局的故事入口。</span></div></div>
+          <div class="principle"><span class="principle-mark">02</span><div><strong>故事区</strong><span>让每一回合正文成为唯一内容真源。</span></div></div>
+          <div class="principle"><span class="principle-mark">03</span><div><strong>右侧检查器</strong><span>在写作之后检查状态、记忆与设定。</span></div></div>
+          <div class="principle"><span class="principle-mark">04</span><div><strong>设置</strong><span>统一管理模型、模板、资源和诊断。</span></div></div>
+        </div>
+      </section>
+
+      <section class="section" id="manual-overview" data-manual-section>
+        <div class="section-heading"><div class="section-number">00</div><div class="section-title"><p class="kicker">开始之前</p><h2>先建立一张心智地图</h2><p>你不需要先理解所有内部机制，沿着入口、写作、回看的顺序使用即可。</p></div></div>
+        <div class="section-body">
+          <div class="prose">
+            <p>Loresis 是一个本地 RP / 故事写作工作台。它把角色卡、世界书、开场白、状态和写手串成一条可以反复回看的故事链。</p>
+            <h3>先记住三件事</h3>
+            <ol>
+              <li><strong>角色卡是故事入口。</strong> 导入卡片后，系统会自动整理世界设定、演绎规则和文风，完成后才适合开始新会话。</li>
+              <li><strong>故事区是唯一的写作现场。</strong> 你在输入框提交行动、对白或叙事方向，章节正文、状态和记忆会从这里持续累积。</li>
+              <li><strong>创世区适合从空白开始。</strong> 没有现成角色卡时，可以先拼出世界模块，再保存成故事，后续流程和导入角色卡完全一致。</li>
+            </ol>
+            <h3>一条完整路径</h3>
+            <pre>模型配置（可稍后完成）
+        ↓
+角色卡导入 / 创世构建
+        ↓
+故事解析完成
+        ↓
+选择开场白、主角模板和写手
+        ↓
+进入故事区，发送第一条行动
+        ↓
+章节、状态、记忆和日志持续保存到本地</pre>
+          </div>
+          <figure class="shot"><div class="shot-topline"><span>真实界面截图</span><span class="shot-meta">工作台总览</span></div><div class="shot-canvas"><img src="tutorial-assets/tutorial-workbench.png" alt="Loresis 工作台总览截图" /><span class="shot-marker" style="left:8%;top:33%">1</span><span class="shot-marker" style="left:8%;top:42%">2</span><span class="shot-marker" style="left:8%;top:51%">3</span><span class="shot-marker" style="left:8%;top:78%">4</span></div><figcaption><span class="shot-caption">一级入口始终在左侧；具体内容根据当前区域展开。</span><span class="shot-legend"><span><b>1</b>角色卡</span><span><b>2</b>故事</span><span><b>3</b>创世</span><span><b>4</b>设置</span></span></figcaption></figure>
+        </div>
+      </section>
+
+      <section class="section" id="manual-basic-flow" data-manual-section>
+        <div class="section-heading"><div class="section-number">01</div><div class="section-title"><p class="kicker">四步开局</p><h2>从第一张卡到第一章</h2><p>先准备模型，再让系统完成故事解析；真正需要决策的只有开场、主角和写手。</p></div></div>
+        <div class="section-body">
+          <div class="prose">
+            <h3>1. 先打开工作台</h3><p>第一次启动时没有模型也可以浏览、导入和整理资料。只有故事解析、创世助手和写作真正需要模型时，界面才会提示你补充连接。</p>
+            <h3>2. 配置模型</h3><p>进入「设置 → 模型配置」，添加一个可用的 OpenAI-compatible、DeepSeek、OpenRouter、Ollama 或其他连接。保存后可以在同一页测试连接，再按角色绑定模型用途。</p>
+            <h3>3. 导入角色卡或进入创世</h3><ul><li>有现成卡片：进入「角色卡」，导入 `.json`、PNG 角色卡或支持的 Markdown。</li><li>从想法开始：进入「创世」，新建一个构建，在模块卡片里填写世界背景、主角、角色、势力、冲突和开场白。</li></ul>
+            <h3>4. 等待故事解析</h3><p>导入卡片或保存创世故事后，系统会自动构建故事解析。角色详情会显示运行、失败或已完成状态；完成后不需要再单独确认。</p>
+            <h3>5. 创建会话</h3><p>在角色详情中点击「新开局」，选择开场白、主角模板和写手。主角模板可以在「设置 → 主角模板」预先维护；写手可以在「写手」或资源仓管理。</p>
+            <h3>6. 发出第一条行动</h3><p>进入故事区，在底部输入框写下你希望角色下一步做什么。可以是对白、动作、镜头要求或简短的叙事方向。</p>
+            <h3>出现问题时</h3><ul><li><strong>提示模型未配置：</strong>回到「设置 → 模型配置」检查连接和角色绑定。</li><li><strong>故事解析失败：</strong>打开角色详情查看失败提示；修改世界书后可以重新构建。</li><li><strong>暂时不想写作：</strong>可以先停留在角色卡、世界书或创世区整理内容，不会自动创建会话。</li></ul>
+          </div>
+          <figure class="shot"><div class="shot-topline"><span>真实界面截图</span><span class="shot-meta">角色卡详情</span></div><div class="shot-canvas"><img src="tutorial-assets/tutorial-card-detail.png" alt="角色卡详情与故事解析状态截图" /><span class="shot-marker" style="left:62%;top:17%">1</span><span class="shot-marker" style="left:65%;top:55%">2</span><span class="shot-marker" style="left:86%;top:87%">3</span></div><figcaption><span class="shot-caption">详情页会把解析状态、开场白和新开局放在同一个工作面。</span><span class="shot-legend"><span><b>1</b>解析状态</span><span><b>2</b>开场白</span><span><b>3</b>新开局</span></span></figcaption></figure>
+        </div>
+      </section>
+
+      <section class="section" id="manual-card-zone" data-manual-section>
+        <div class="section-heading"><div class="section-number">02</div><div class="section-title"><p class="kicker">故事入口</p><h2>让原始资料先变得可用</h2><p>角色卡、世界书、开场白和故事解析在同一条入口链上，不需要手动搬运内容。</p></div></div>
+        <div class="section-body single"><div class="prose">
+          <h3>角色卡列表</h3><p>角色卡区展示本地可用的角色卡。卡片上的来源标签帮助你区分导入内容和创世生成内容，MVU 标签表示这张卡包含可识别的变量规则。</p>
+          <p>点击卡片进入详情。详情页左侧会显示封面、来源和状态质量，右侧集中展示开场白、历史会话和新开局入口。</p>
+          <h3>世界书与故事解析</h3><p>「世界书」是角色卡的设定资料区，可以查看词条、开场白和故事解析。故事解析会把原始资料整理成更易于写作使用的概览、演绎规则和文风，不会替代角色卡里的原生状态变量。</p>
+          <p>修改词条或开场白后，页面顶部可能出现“设定已修改，故事解析可重新构建”的提示。这是被动提醒：旧解析仍可继续使用，是否重新构建由你决定。</p>
+          <h3>开场白</h3><p>新建会话前选择一个开场白。系统会把这次选择与会话绑定，并在草稿阶段准备好初始状态；首次发送时才正式锁定开场并落盘第一章。</p>
+          <h3>什么时候回到角色卡区</h3><ul><li>想换一条开场白或主角身份时；</li><li>想查看故事解析是否完成时；</li><li>想从当前故事结算出独立续篇时；</li><li>想把创世构建保存成新的故事时。</li></ul>
+        </div></div>
+      </section>
+
+      <section class="section" id="manual-story-zone" data-manual-section>
+        <div class="section-heading"><div class="section-number">03</div><div class="section-title"><p class="kicker">写作现场</p><h2>推进章节，也看见它留下了什么</h2><p>中央正文负责写作，右侧检查器负责把状态、记忆和设定变成可回看的真值。</p></div></div>
+        <div class="section-body">
+          <div class="prose">
+            <h3>中央正文</h3><p>中央区域按章节显示用户输入和角色回复。正文是会话的唯一内容真源：展示层可以折叠思维链、MVU 协议或可执行 HTML，但不会另存一份替代正文。</p>
+            <h3>底部输入框</h3><p>输入框适合写下一步行动，也可以输入对白、场景要求或对当前章节的修正。工具栏提供写手选择、快速提示词和常用的上下滚动控制。</p>
+            <h3>右侧检查器</h3><ul><li><strong>状态：</strong>查看 State Core 和角色卡原生 MVU 状态；必要时可以审阅并补算章节变量。</li><li><strong>记忆：</strong>维护时间线、候选事实、自定义表和人物档案。</li><li><strong>设定：</strong>补充本局专属设定和叙事备注，不会改写原始角色卡。</li><li><strong>小精灵：</strong>在当前 Session 中提问、检索资料，或审阅它提出的修改建议。</li></ul>
+            <h3>推荐习惯</h3><p>先用自然语言推进故事，等正文落盘后再检查状态和记忆。涉及 MVU 时，先审阅补算结果，再点击确认应用；这样可以保留每一步的可追溯记录。</p>
+          </div>
+          <figure class="shot"><div class="shot-topline"><span>真实界面截图</span><span class="shot-meta">故事区</span></div><div class="shot-canvas"><img src="tutorial-assets/tutorial-story-zone.png" alt="故事区章节流、输入框和右侧检查器截图" /><span class="shot-marker" style="left:42%;top:29%">1</span><span class="shot-marker" style="left:40%;top:87%">2</span><span class="shot-marker" style="left:91%;top:43%">3</span></div><figcaption><span class="shot-caption">建议先写正文，再打开右侧检查器确认状态与记忆。</span><span class="shot-legend"><span><b>1</b>章节正文</span><span><b>2</b>输入框</span><span><b>3</b>右侧检查器</span></span></figcaption></figure>
+        </div>
+      </section>
+
+      <section class="section" id="manual-genesis-zone" data-manual-section>
+        <div class="section-heading"><div class="section-number">04</div><div class="section-title"><p class="kicker">从想法开始</p><h2>把零散设定拼成一个可开局的世界</h2><p>用卡片承载世界背景、角色和冲突，用预览确认最终拼接出的故事包。</p></div></div>
+        <div class="section-body">
+          <div class="prose">
+            <h3>什么时候使用创世</h3><p>当你只有一个世界观、一个人物关系或一条冲突线，还没有整理成 SillyTavern 角色卡时，可以从创世开始。创世构建会在本地保存，不会影响已有故事。</p>
+            <h3>模块卡片</h3><p>默认构建包含世界背景、主角、主要角色和思维链卡片。你可以继续增加自定义模块或开场白，把复杂设定拆成更容易编辑的块。</p><p>填写时优先写“会改变故事走向”的事实：人物目标、关系张力、冲突限制、叙事视角和开场时刻。</p>
+            <h3>创世助手</h3><p>左侧助手可以围绕当前构建给出补全建议。点击卡片级「AI 修改」时，目标卡片会成为上下文；助手会直接更新当前草稿，同时在聊天记录中保留 change 记录。</p>
+            <h3>预览与保存</h3><p>顶部「预览」可以查看编译后的 `world.md`。确认模块完整后点击「保存为故事」，系统会生成一张兼容角色卡、世界书和开场白，并自动进入故事解析流程。</p><p>已保存的构建再次保存时会另存为新故事，不会静默覆盖原故事。</p>
+          </div>
+          <figure class="shot"><div class="shot-topline"><span>真实界面截图</span><span class="shot-meta">创世工作区</span></div><div class="shot-canvas"><img src="tutorial-assets/tutorial-genesis-zone.png" alt="创世区模块卡片与助手截图" /><span class="shot-marker" style="left:12%;top:30%">1</span><span class="shot-marker" style="left:52%;top:35%">2</span><span class="shot-marker" style="left:84%;top:12%">3</span></div><figcaption><span class="shot-caption">卡片级 AI 修改会直接作用于当前草稿，并留下可回看的 change 记录。</span><span class="shot-legend"><span><b>1</b>资料仓 / 助手</span><span><b>2</b>模块卡片</span><span><b>3</b>预览 / 保存</span></span></figcaption></figure>
+        </div>
+      </section>
+
+      <section class="section" id="manual-writer-resource" data-manual-section>
+        <div class="section-heading"><div class="section-number">05</div><div class="section-title"><p class="kicker">可复用素材</p><h2>把偏好和资料收进同一个仓库</h2><p>写手提示词、世界提示词、参考资料和小精灵记忆片段都可以被重复使用。</p></div></div>
+        <div class="section-body single"><div class="prose">
+          <h3>写手区</h3><p>「写手」用于管理 Narrative 写手。一个写手的核心是提示词正文；会话会保存当时使用的资源快照，因此后来编辑资源不会偷偷改写历史章节。</p>
+          <h3>导入酒馆预设</h3><p>在写手区导入 SillyTavern Chat Completion Prompt Manager 预设。系统会先做确定性预清洗，再让模型识别范围、名称和分类；原文不会被模型改写。你在审阅弹窗中勾选需要的片段后，才会保存成写手资源。</p>
+          <h3>资源仓</h3><p>资源仓统一保存写手提示词、世界提示词、参考资料和小精灵的记忆片段。把资源插入创世卡片或写手草稿时，系统复制正文而不是建立实时同步。</p>
+          <h3>Agent 写作开关</h3><p>Agent 多轮策略在「设置 → 模型配置」的全局设置里管理。故事区可以按会话切换开关；写作中不能切换，避免一回合内改变执行方式。</p>
+        </div></div>
+      </section>
+
+      <section class="section" id="manual-settings" data-manual-section>
+        <div class="section-heading"><div class="section-number">06</div><div class="section-title"><p class="kicker">最后一公里</p><h2>让工作台更像你的工作台</h2><p>模型、主题、主角模板、快速提示词和日志都集中在设置里，遇到问题按顺序检查。</p></div></div>
+        <div class="section-body">
+          <div class="prose">
+            <h3>设置里的常用入口</h3><ul><li><strong>主题：</strong>日夜模式、内置主题、字体比例和紧凑布局。</li><li><strong>模型配置：</strong>连接、模型列表、角色绑定和 Agent 多轮策略。</li><li><strong>主角模板：</strong>新开局可选择的身份、别称、性格与背景。</li><li><strong>快速提示词：</strong>输入框 `#` 候选，支持分组和 JSON 导入导出。</li><li><strong>小精灵：</strong>全局人格、模型和主动性配置；Session 内的聊天仍在故事右栏。</li><li><strong>日志：</strong>查看当前 Session 的 LLM、MVU、事件和运行记录。</li></ul>
+            <h3>最小排错顺序</h3><ol><li>先确认当前打开的是正确的角色卡和 Session。</li><li>再检查「模型配置」中的连接测试和角色绑定。</li><li>如果是故事解析问题，回到角色详情查看构建状态和失败原因。</li><li>如果是章节状态问题，先打开故事右侧「状态」查看 MVU / State Core，再决定是否补算。</li><li>需要提供诊断信息时，进入「设置 → 日志」查看对应回合；日志和正文都只保存在本地。</li></ol>
+            <h3>数据在哪里</h3><p>本地运行数据位于项目的 `assets/` 目录。角色卡、世界书和 Session 都按角色卡分目录保存；Session 下的章节、状态和运行日志可以用于回看与排错，不建议直接手动编辑。</p>
+          </div>
+          <figure class="shot"><div class="shot-topline"><span>真实界面截图</span><span class="shot-meta">设置页</span></div><div class="shot-canvas"><img src="tutorial-assets/tutorial-settings.png" alt="设置页模型配置和教程入口截图" /><span class="shot-marker" style="left:10%;top:30%">1</span><span class="shot-marker" style="left:10%;top:75%">2</span><span class="shot-marker" style="left:51%;top:30%">3</span></div><figcaption><span class="shot-caption">教程、模型和日志在同一个一级设置面板中，切换后不会离开当前工作台。</span><span class="shot-legend"><span><b>1</b>模型配置</span><span><b>2</b>新手教程</span><span><b>3</b>内容区</span></span></figcaption></figure>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div class="footer-mark" aria-hidden="true">✓</div>
+        <div><strong>准备好了？</strong><p>从「角色卡」或「创世」开始。遇到需要模型的步骤时，再回到「设置 → 模型配置」补上连接即可。</p></div>
+        <a href="#manual-basic-flow">回到基本流程 ↑</a>
+      </footer>
+    </main>
+
+    <script>
+      (() => {
+        const manual = document.querySelector('[data-tutorial-manual]');
+        if (!manual) return;
+
+        const railItems = [...manual.querySelectorAll('.rail-item')];
+        const sections = [...manual.querySelectorAll('[data-manual-section]')];
+        const setActive = (id) => railItems.forEach((item) => item.classList.toggle('active', item.getAttribute('href') === `#${id}`));
+
+        railItems.forEach((item) => item.addEventListener('click', () => setActive(item.getAttribute('href').slice(1))));
+        if ('IntersectionObserver' in window) {
+          const observer = new IntersectionObserver((entries) => {
+            const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+            if (visible[0]?.target?.id) setActive(visible[0].target.id);
+          }, { rootMargin: '-12% 0px -66% 0px', threshold: [0.12, 0.32, 0.6] });
+          sections.forEach((section) => observer.observe(section));
+        }
+
+        manual.querySelectorAll('.shot-canvas img').forEach((image) => {
+          image.addEventListener('error', () => {
+            const fallback = document.createElement('div');
+            fallback.className = 'shot-fallback';
+            fallback.textContent = '截图素材暂不可用，请确认 tutorial-assets/ 已随文档放置。';
+            image.replaceWith(fallback);
+          }, { once: true });
+        });
+      })();
+    </script>
+  </body>
+</html>
