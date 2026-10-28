@@ -1,0 +1,16 @@
+import{c as t,j as e}from"./createLucideIcon.C8od6vXL.js";import{r as l}from"./index.qNTDzdXh.js";/**
+ * @license lucide-react v0.562.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const i=[["path",{d:"M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4",key:"tonef"}],["path",{d:"M9 18c-4.51 2-5-2-7-2",key:"9comsn"}]],o=t("github",i);/**
+ * @license lucide-react v0.562.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const d=[["path",{d:"M4 5h16",key:"1tepv9"}],["path",{d:"M4 12h16",key:"1lakjw"}],["path",{d:"M4 19h16",key:"1djgab"}]],c=t("menu",d);/**
+ * @license lucide-react v0.562.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const h=[["path",{d:"M18 6 6 18",key:"1bl5f8"}],["path",{d:"m6 6 12 12",key:"d8bk6v"}]],m=t("x",h),n="https://github.com/zhuoming2026/Loresis",s="text-muted-foreground hover:text-primary font-medium transition-colors",f=()=>{const[a,r]=l.useState(!1);return e.jsxs("nav",{"aria-label":"主导航",className:"bg-background/80 border-border/40 sticky top-0 z-50 flex w-full items-center justify-between border-b px-6 py-4 shadow-sm backdrop-blur-lg md:px-12",children:[e.jsxs("a",{href:"/Loresis/",className:"text-primary flex items-center gap-3 transition-opacity hover:opacity-80",children:[e.jsx("img",{src:"/Loresis/icons/icon.png",alt:"",className:"h-9 w-9 rounded-xl shadow-sm"}),e.jsx("span",{className:"font-heading text-foreground text-2xl font-bold",children:"Loresis"})]}),e.jsxs("div",{className:"ml-auto hidden items-center gap-6 font-medium md:flex",children:[e.jsx("a",{href:"/Loresis/manual/",className:s,children:"使用手册"}),e.jsx("a",{href:"/Loresis/changelog/",className:s,children:"更新日志"}),e.jsxs("a",{href:n,target:"_blank",rel:"noreferrer",className:"font-heading bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2 rounded-full px-5 py-2 font-bold shadow-lg transition-all hover:scale-105 hover:shadow-xl",children:[e.jsx(o,{className:"h-4 w-4"}),"GitHub"]})]}),e.jsx("button",{type:"button",className:"text-foreground bg-primary/10 hover:bg-primary/25 ml-auto rounded-full p-2 transition-colors md:hidden",onClick:()=>r(!a),"aria-label":a?"关闭导航菜单":"打开导航菜单","aria-expanded":a,children:a?e.jsx(m,{}):e.jsx(c,{})}),a&&e.jsxs("div",{className:"bg-card border-border/60 absolute top-full right-4 left-4 z-50 mt-2 flex flex-col gap-5 rounded-2xl border p-6 shadow-2xl md:hidden",children:[e.jsx("a",{href:"/Loresis/manual/",className:s,onClick:()=>r(!1),children:"使用手册"}),e.jsx("a",{href:"/Loresis/changelog/",className:s,onClick:()=>r(!1),children:"更新日志"}),e.jsxs("a",{href:n,target:"_blank",rel:"noreferrer",className:"font-heading bg-primary text-primary-foreground hover:bg-primary/90 flex items-center justify-center gap-2 rounded-full py-3 font-bold shadow-lg transition-colors",onClick:()=>r(!1),children:[e.jsx(o,{className:"h-4 w-4"}),"GitHub"]})]})]})};export{f as S,m as X};
